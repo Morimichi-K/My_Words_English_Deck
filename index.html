@@ -11,20 +11,16 @@
     <style>
         :root {
             /* NEC Blue Image Palette */
-            --nec-blue: #0054A6;       /* 標準的なNECブルーに近い色 */
-            --nec-dark: #121CB8;       /* ロゴのような深い青 */
-            
-            --primary-gradient: linear-gradient(135deg, #0054A6 0%, #002B69 100%); /* 鮮やかな青から紺へのグラデーション */
-            --accent-color: #0054A6;   /* テキスト強調色 */
-            
-            --bg-color: #f4f8fb;       /* 背景は青みがかった極薄いグレー */
+            --nec-blue: #0054A6;
+            --nec-dark: #002B69;
+            --primary-gradient: linear-gradient(135deg, #0054A6 0%, #002B69 100%);
+            --accent-color: #0054A6;
+            --bg-color: #f4f8fb;
             --card-bg: #ffffff;
             --text-main: #222222;
-            --text-sub: #546e7a;       /* 青みがかったグレー */
-            
-            --danger-color: #e53935;   /* 削除用赤 */
-            --restore-color: #00c853;  /* 復元用緑 */
-            
+            --text-sub: #546e7a;
+            --danger-color: #e53935;
+            --restore-color: #00c853;
             --shadow-soft: 0 10px 15px -3px rgba(0, 43, 105, 0.08), 0 4px 6px -2px rgba(0, 43, 105, 0.04);
         }
 
@@ -48,14 +44,13 @@
             padding: 0 20px;
         }
 
-        /* ヘッダー＆入力エリア */
+        /* ヘッダー周り */
         .sticky-header {
             position: sticky;
             top: 0;
             z-index: 100;
             padding-top: 20px;
             padding-bottom: 10px;
-            /* 背景と同色のグラデーションで透過処理 */
             background: linear-gradient(to bottom, #f4f8fb 90%, rgba(244, 248, 251, 0));
         }
 
@@ -66,6 +61,33 @@
             box-shadow: var(--shadow-soft);
             border: 1px solid rgba(255,255,255,0.8);
             margin-bottom: 20px;
+            position: relative; /* 設定ボタン配置のため */
+        }
+
+        /* 設定ボタン（歯車） */
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-sub);
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .settings-btn:hover {
+            background-color: #f0f4f8;
+            color: var(--nec-blue);
+            transform: rotate(30deg);
         }
 
         h1 {
@@ -76,6 +98,8 @@
             margin-bottom: 20px;
             text-transform: uppercase;
             font-weight: 700;
+            padding-right: 20px; /* ボタンと重ならないように */
+            padding-left: 20px;
         }
 
         h1 span {
@@ -108,10 +132,9 @@
             outline: none;
             background: #fff;
             border-color: var(--nec-blue);
-            box-shadow: 0 0 0 3px rgba(0, 84, 166, 0.15); /* 青いグロー効果 */
+            box-shadow: 0 0 0 3px rgba(0, 84, 166, 0.15);
         }
 
-        /* AI検索ボタン */
         #auto-fill-btn {
             position: absolute;
             right: 8px;
@@ -128,13 +151,9 @@
             transition: all 0.2s;
         }
         
-        #auto-fill-btn:hover {
-            background: rgba(0, 84, 166, 0.15);
-        }
-
+        #auto-fill-btn:hover { background: rgba(0, 84, 166, 0.15); }
         #auto-fill-btn:disabled { opacity: 0.5; }
 
-        /* 追加ボタン */
         button#add-btn {
             width: 100%;
             padding: 16px;
@@ -151,10 +170,10 @@
 
         button#add-btn:active { transform: scale(0.98); }
 
-        /* タブ切り替えエリア */
+        /* タブ */
         .tabs {
             display: flex;
-            background: #dfe6ed; /* 少し青みがかったグレー */
+            background: #dfe6ed;
             padding: 4px;
             border-radius: 16px;
             margin-bottom: 20px;
@@ -180,10 +199,11 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        /* 単語リスト */
+        /* リスト */
         #word-list {
             list-style: none;
-            padding-bottom: 80px;
+            padding-bottom: 20px;
+            min-height: 200px;
         }
 
         .empty-state {
@@ -219,13 +239,9 @@
             transition: background 0.3s;
         }
 
-        /* めくった時の左側の線も青 */
         .word-card.revealed::before { background: var(--nec-blue); }
 
-        .word-card.trash-item {
-            opacity: 0.8;
-            background: #fdfdfd;
-        }
+        .word-card.trash-item { opacity: 0.8; background: #fdfdfd; }
         .word-card.trash-item::before { background: #cfd8dc; }
 
         .english-word {
@@ -248,7 +264,7 @@
         .japanese-meaning {
             font-size: 1.4rem;
             font-weight: 700;
-            color: var(--nec-blue); /* 意味のテキストも青色に */
+            color: var(--nec-blue);
             margin-top: 0;
             max-height: 0;
             opacity: 0;
@@ -265,7 +281,6 @@
             transform: translateY(0);
         }
 
-        /* アクションボタン群 */
         .actions {
             position: absolute;
             top: 20px;
@@ -288,35 +303,125 @@
             font-size: 1.2rem;
         }
 
-        .btn-trash {
-            color: #b0bec5;
-        }
-        .btn-trash:hover {
-            color: var(--danger-color);
-            background: rgba(229, 57, 53, 0.1);
-        }
-
-        .btn-restore {
-            color: var(--restore-color);
-            background: rgba(0, 200, 83, 0.1);
-        }
-        .btn-restore:hover {
-            background: rgba(0, 200, 83, 0.2);
-        }
-
-        .btn-destroy {
-            color: var(--danger-color);
-            background: rgba(229, 57, 53, 0.1);
-        }
-        .btn-destroy:hover {
-            background: rgba(229, 57, 53, 0.2);
-        }
+        .btn-trash { color: #b0bec5; }
+        .btn-trash:hover { color: var(--danger-color); background: rgba(229, 57, 53, 0.1); }
+        .btn-restore { color: var(--restore-color); background: rgba(0, 200, 83, 0.1); }
+        .btn-restore:hover { background: rgba(0, 200, 83, 0.2); }
+        .btn-destroy { color: var(--danger-color); background: rgba(229, 57, 53, 0.1); }
+        .btn-destroy:hover { background: rgba(229, 57, 53, 0.2); }
 
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .word-card { animation: slideIn 0.4s ease-out forwards; }
+
+
+        /* --- 設定モーダル --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background: #fff;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .modal-close {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-sub);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .modal-close:hover { background: #f0f4f8; }
+
+        .backup-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .backup-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e1e8ed;
+            background: #fff;
+            border-radius: 14px;
+            font-size: 1rem;
+            color: var(--text-main);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .backup-btn:hover {
+            border-color: var(--nec-blue);
+            background: #f4f8fb;
+            color: var(--nec-blue);
+        }
+
+        .backup-btn span.icon {
+            font-size: 1.2rem;
+        }
+
+        .note {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            text-align: center;
+            line-height: 1.5;
+        }
 
     </style>
 </head>
@@ -326,7 +431,11 @@
     <div class="sticky-header">
         <!-- 入力エリア -->
         <div class="input-card" id="input-card">
+            <!-- 設定ボタンを追加 -->
+            <button class="settings-btn" onclick="openSettings()" title="設定・データ管理">⚙️</button>
+            
             <h1>My Words <span>English Deck</span></h1>
+            
             <div class="input-group">
                 <input type="text" id="english" placeholder="English Word">
                 <button id="auto-fill-btn">AI Search</button>
@@ -350,6 +459,35 @@
     </ul>
 </div>
 
+<!-- 設定モーダル -->
+<div class="modal-overlay" id="settings-modal" onclick="closeSettings(event)">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title">Settings & Data</div>
+            <button class="modal-close" onclick="closeSettingsBtn()">×</button>
+        </div>
+        
+        <div class="backup-section">
+            <button class="backup-btn" onclick="exportData()">
+                <span>データを保存 (書き出し)</span>
+                <span class="icon">📥</span>
+            </button>
+            
+            <button class="backup-btn" onclick="document.getElementById('file-input').click()">
+                <span>データを復元 (読み込み)</span>
+                <span class="icon">📤</span>
+            </button>
+        </div>
+
+        <p class="note">
+            機種変更時などは「保存」でファイルをダウンロードし、<br>新しい端末で「復元」してください。
+        </p>
+
+        <!-- 隠しファイル入力 -->
+        <input type="file" id="file-input" style="display: none;" accept=".json" onchange="importData(this)">
+    </div>
+</div>
+
 <script>
     const englishInput = document.getElementById('english');
     const japaneseInput = document.getElementById('japanese');
@@ -357,6 +495,7 @@
     const autoFillBtn = document.getElementById('auto-fill-btn');
     const wordList = document.getElementById('word-list');
     const inputCard = document.getElementById('input-card');
+    const settingsModal = document.getElementById('settings-modal');
 
     let words = JSON.parse(localStorage.getItem('myWordList')) || [];
     let trash = JSON.parse(localStorage.getItem('myTrashList')) || [];
@@ -364,6 +503,7 @@
 
     renderList();
 
+    // タブ切り替え
     window.switchTab = function(tabName) {
         currentTab = tabName;
         document.getElementById('tab-list').className = tabName === 'list' ? 'tab active' : 'tab';
@@ -379,14 +519,13 @@
         renderList();
     }
 
+    // AI検索
     autoFillBtn.addEventListener('click', async () => {
         const text = englishInput.value.trim();
         if (!text) { englishInput.focus(); return; }
-
         const originalBtnText = autoFillBtn.textContent;
         autoFillBtn.textContent = '...';
         autoFillBtn.disabled = true;
-
         try {
             const response = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|ja`);
             const data = await response.json();
@@ -402,6 +541,7 @@
         }
     });
 
+    // 追加
     addBtn.addEventListener('click', () => {
         const en = englishInput.value.trim();
         const ja = japaneseInput.value.trim();
@@ -415,6 +555,7 @@
         englishInput.focus();
     });
 
+    // 描画
     function renderList() {
         wordList.innerHTML = '';
         const targetList = currentTab === 'list' ? words : trash;
@@ -456,6 +597,7 @@
         });
     }
 
+    // ゴミ箱移動・復元・削除
     window.moveToTrash = function(id) {
         const targetIndex = words.findIndex(w => w.id === id);
         if (targetIndex > -1) {
@@ -466,7 +608,6 @@
             renderList();
         }
     }
-
     window.restoreWord = function(id) {
         const targetIndex = trash.findIndex(w => w.id === id);
         if (targetIndex > -1) {
@@ -477,19 +618,79 @@
             renderList();
         }
     }
-
     window.deletePermanently = function(id) {
-        if(confirm('完全に削除しますか？この操作は取り消せません。')) {
+        if(confirm('完全に削除しますか？')) {
             trash = trash.filter(w => w.id !== id);
             saveAll();
             renderList();
         }
     }
-
     function saveAll() {
         localStorage.setItem('myWordList', JSON.stringify(words));
         localStorage.setItem('myTrashList', JSON.stringify(trash));
     }
+
+    // --- 設定モーダル関連 ---
+    window.openSettings = function() {
+        settingsModal.classList.add('active');
+    }
+    window.closeSettings = function(e) {
+        if (e.target === settingsModal) {
+            settingsModal.classList.remove('active');
+        }
+    }
+    window.closeSettingsBtn = function() {
+        settingsModal.classList.remove('active');
+    }
+
+    // --- バックアップ機能 ---
+    window.exportData = function() {
+        if(words.length === 0 && trash.length === 0) {
+            alert('保存するデータがありません。');
+            return;
+        }
+        const data = { words: words, trash: trash, exportedAt: new Date().toISOString() };
+        const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `wordbook_${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        closeSettingsBtn(); // 完了したら閉じる
+    };
+
+    window.importData = function(input) {
+        const file = input.files[0];
+        if(!file) return;
+        if(!confirm('データを復元しますか？現在のデータは上書きされます。')) {
+            input.value = '';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = JSON.parse(e.target.result);
+                if(Array.isArray(data.words) && Array.isArray(data.trash)) {
+                    words = data.words;
+                    trash = data.trash;
+                    saveAll();
+                    renderList();
+                    alert('復元が完了しました！');
+                    closeSettingsBtn(); // 完了したら閉じる
+                } else {
+                    alert('ファイル形式が正しくありません。');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('読み込みに失敗しました。');
+            }
+        };
+        reader.readAsText(file);
+        input.value = '';
+    };
 
     function escapeHtml(str) {
         if(!str) return str;
