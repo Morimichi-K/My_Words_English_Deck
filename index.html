@@ -43,12 +43,15 @@
             color: var(--text-main);
             font-family: 'Poppins', 'Noto Sans JP', sans-serif;
             padding-bottom: 80px;
+            /* スワイプ時の誤動作防止 */
+            overscroll-behavior-x: none;
         }
 
         .container {
             max-width: 600px;
             margin: 0 auto;
             padding: 0 20px;
+            min-height: 80vh; /* スワイプ判定領域を確保 */
         }
 
         /* --- ヘッダーエリア --- */
@@ -70,7 +73,7 @@
             justify-content: space-between;
             margin-bottom: 10px;
             position: relative;
-            height: 44px; /* 高さを固定して安定させる */
+            height: 44px;
         }
 
         /* タイトル (絶対配置でど真ん中に固定) */
@@ -88,7 +91,7 @@
             margin: 0;
             line-height: 1.2;
             width: 100%;
-            pointer-events: none; /* 下にある要素のクリックを邪魔しないように */
+            pointer-events: none;
             z-index: 0;
         }
         h1 span {
@@ -114,7 +117,7 @@
             justify-content: center;
             transition: all 0.2s;
             position: relative;
-            z-index: 10; /* タイトルより上に */
+            z-index: 10;
         }
         .settings-btn:hover { background-color: #eef2f6; color: var(--theme-blue); transform: rotate(30deg); }
 
@@ -136,7 +139,7 @@
             height: 36px;
             min-width: 80px;
             position: relative;
-            z-index: 10; /* タイトルより上に */
+            z-index: 10;
         }
         .mode-toggle-btn.mode-en { color: var(--theme-blue); background: rgba(0, 84, 166, 0.1); }
         .mode-toggle-btn.mode-ja { color: var(--theme-orange); background: rgba(245, 127, 23, 0.1); }
@@ -173,6 +176,8 @@
         #word-list {
             list-style: none;
             min-height: 200px;
+            /* スワイプ時のアニメーション用 */
+            transition: opacity 0.2s, transform 0.2s;
         }
         .empty-state {
             text-align: center;
@@ -193,7 +198,16 @@
             transition: transform 0.2s;
             overflow: hidden;
             border: 1px solid transparent;
+            /* リスト表示時のアニメーション */
+            animation: slideIn 0.3s ease-out forwards;
+            opacity: 0;
+            transform: translateY(10px);
         }
+
+        @keyframes slideIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .word-card:active { transform: scale(0.98); }
         .word-card::before {
             content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
@@ -512,7 +526,8 @@
             else if(currentTab === 'memorized') li.className = 'word-card memorized-item';
             else li.className = 'word-card trash-item';
 
-            li.style.animationDelay = `${index * 0.05}s`;
+            // スワイプ時にアニメーションが遅れないように若干調整
+            li.style.animationDelay = `${index * 0.03}s`;
             
             li.onclick = (e) => {
                 if(e.target.closest('.icon-btn')) return;
@@ -654,6 +669,53 @@
         return str.replace(/[&<>"']/g, function(match) {
             return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[match];
         });
+    }
+
+    /* --- スワイプ機能の実装 --- */
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    
+    // タブの順番定義
+    const tabOrder = ['list', 'memorized', 'trash'];
+
+    document.addEventListener('touchstart', e => {
+        // モーダルが開いているときはスワイプ無効
+        if(inputModal.classList.contains('active') || settingsModal.classList.contains('active')) return;
+        
+        touchStartX = e.changedTouches[0].screenX;
+        touchStartY = e.changedTouches[0].screenY;
+    }, {passive: true});
+
+    document.addEventListener('touchend', e => {
+        if(inputModal.classList.contains('active') || settingsModal.classList.contains('active')) return;
+
+        touchEndX = e.changedTouches[0].screenX;
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipeGesture();
+    }, {passive: true});
+
+    function handleSwipeGesture() {
+        const xDiff = touchEndX - touchStartX;
+        const yDiff = touchEndY - touchStartY;
+        
+        // 横方向の移動距離が一定以上、かつ縦スクロールよりも横移動が大きい場合のみ反応
+        if (Math.abs(xDiff) > 50 && Math.abs(xDiff) > Math.abs(yDiff)) {
+            const currentIndex = tabOrder.indexOf(currentTab);
+            
+            if (xDiff > 0) {
+                // 右スワイプ (→) : 前のタブへ
+                if (currentIndex > 0) {
+                    switchTab(tabOrder[currentIndex - 1]);
+                }
+            } else {
+                // 左スワイプ (←) : 次のタブへ
+                if (currentIndex < tabOrder.length - 1) {
+                    switchTab(tabOrder[currentIndex + 1]);
+                }
+            }
+        }
     }
 </script>
 
